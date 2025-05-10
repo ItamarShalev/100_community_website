@@ -1,0 +1,32 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+      
+      - name: Setup machine
+        uses: ./.github/actions/setup_machine
+
+      - name: Run ruff
+        run: |
+          uv run ruff check
+
+  type-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+      
+      - name: Setup machine
+        uses: ./.github/actions/setup_machine
+
+      - name: Run mypy
+        run: |
+          uv run mypy $(git ls-files '*.py')
