@@ -1,5 +1,5 @@
 [project]
-name = "100-community-website"
+name = "100_community_website"
 version = "0.1.0"
 description = "Website for Together to 100 Community"
 readme = "README.md"
