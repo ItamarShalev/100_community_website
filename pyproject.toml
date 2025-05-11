@@ -19,3 +19,7 @@ dev = [
 
 [tool.mypy]
 explicit_package_bases = true
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
