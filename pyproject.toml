@@ -16,3 +16,6 @@ dev = [
     "pytest>=8.3.5",
     "ruff>=0.11.9",
 ]
+
+[tool.mypy]
+explicit_package_bases = true
