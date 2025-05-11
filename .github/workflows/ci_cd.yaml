@@ -1,11 +1,8 @@
-# .github/workflows/cd.yaml
-name: CD
+name: ci_cd
 
 on:
-  workflow_run:
-    workflows: ["CI"]
-    types:
-      - completed
+  push:
+  pull_request:
 
 env:
   DOCKER_REPO: theitamarshalev/100_community:latest
@@ -13,8 +10,48 @@ env:
   TARGET_BRANCH: main
 
 jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+      
+      - name: Setup machine
+        uses: ./.github/actions/setup_machine
+
+      - name: Run ruff
+        run: |
+          uv run ruff check
+
+  type-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+      
+      - name: Setup machine
+        uses: ./.github/actions/setup_machine
+
+      - name: Run mypy
+        run: |
+          uv run mypy $(git ls-files '*.py')
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup machine
+        uses: ./.github/actions/setup_machine
+
+      - name: Run pytest
+        run: |
+          uv run pytest $(git ls-files 'test_*.py')
+
   build-docker:
-    if: ${{ github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'main' }}
+    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+    needs: [lint, type-check, test]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
